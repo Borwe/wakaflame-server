@@ -1,4 +1,4 @@
-use actix_web::{HttpServer, middleware, App, Responder, HttpResponse, HttpRequest, web};
+use actix_web::{HttpServer,  App, Responder, HttpResponse, HttpRequest, web};
 use actix_web::http::header::{HeaderValue, HeaderName};
 use reqwest::{Client, header::HeaderMap, Response};
 
@@ -32,12 +32,20 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
         let key = k.to_string();
         let value = String::from(headers.get(key.clone()).unwrap().to_str().unwrap());
 
+        if key.to_lowercase() == "content-encoding"{
+            continue;
+        }
+
         resp.headers_mut().insert(HeaderName::from_bytes(key.as_bytes()).unwrap(),
             HeaderValue::from_bytes(value.as_bytes()).unwrap());
     }
     resp.headers_mut().insert(HeaderName::from_bytes(b"Access-Control-Allow-Origin").unwrap(),
         HeaderValue::from_bytes(b"*").unwrap());
-    resp.set_body(req2.text().await.unwrap())
+    let body = req2.text().await.unwrap();
+    resp.headers_mut().insert(HeaderName::from_bytes(b"Content-Length").unwrap(),
+        HeaderValue::from_bytes(body.len().to_string().as_bytes()).unwrap());
+    let resp = resp.set_body(body);
+    resp
 }
 
 #[actix_web::main]
@@ -48,7 +56,6 @@ async fn main() -> std::io::Result<()> {
     };
     HttpServer::new(||{
         App::new()
-            .wrap(middleware::Compress::default())
             .app_data(web::Data::new(Client::new()))
             .route("/api/v1/{something}", web::get().to(index))
     })
