@@ -41,6 +41,8 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
     }
     resp.headers_mut().insert(HeaderName::from_bytes(b"Access-Control-Allow-Origin").unwrap(),
         HeaderValue::from_bytes(b"*").unwrap());
+    resp.headers_mut().insert(HeaderName::from_bytes(b"Content-Encoding").unwrap(),
+        HeaderValue::from_bytes(b"Identity").unwrap());
     let body = req2.text().await.unwrap();
     resp.headers_mut().insert(HeaderName::from_bytes(b"Content-Length").unwrap(),
         HeaderValue::from_bytes(body.len().to_string().as_bytes()).unwrap());
