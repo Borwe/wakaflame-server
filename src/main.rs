@@ -42,11 +42,15 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let port: u16 = match std::env::var("PORT"){
+        Ok(x)=> x.parse::<u16>().unwrap(),
+        Err(_)=> 7777
+    };
     HttpServer::new(||{
         App::new()
             .app_data(web::Data::new(Client::new()))
             .route("/api/v1/{something}", web::get().to(index))
     })
-    .bind(("127.0.0.1",7777))?
+    .bind(("0.0.0.0",port))?
     .run().await
 }
