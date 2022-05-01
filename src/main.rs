@@ -35,6 +35,8 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
         resp.headers_mut().insert(HeaderName::from_bytes(key.as_bytes()).unwrap(),
             HeaderValue::from_bytes(value.as_bytes()).unwrap());
     }
+    resp.headers_mut().insert(HeaderName::from_bytes(b"Access-Control-Allow-Origin").unwrap(),
+        HeaderValue::from_bytes(b"*").unwrap());
     resp.set_body(req2.text().await.unwrap())
 }
 
