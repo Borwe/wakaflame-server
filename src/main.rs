@@ -1,4 +1,4 @@
-use actix_web::{HttpServer, App, Responder, HttpResponse, HttpRequest, web};
+use actix_web::{HttpServer, middleware, App, Responder, HttpResponse, HttpRequest, web};
 use actix_web::http::header::{HeaderValue, HeaderName};
 use reqwest::{Client, header::HeaderMap, Response};
 
@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
     };
     HttpServer::new(||{
         App::new()
+            .wrap(middleware::Compress::default())
             .app_data(web::Data::new(Client::new()))
             .route("/api/v1/{something}", web::get().to(index))
     })
