@@ -19,6 +19,10 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
         let key = key.to_string();
         let value: String = String::from(headers.get(key.clone()).unwrap().to_str().unwrap());
 
+        if key.to_lowercase() == "accept-encoding" {
+            continue;
+        }
+
         headers_for_req2.insert(reqwest::header::HeaderName::from_bytes(key.as_bytes()).unwrap(),
             value.parse().unwrap());
     }
@@ -44,6 +48,7 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
     resp.headers_mut().insert(HeaderName::from_bytes(b"Content-Encoding").unwrap(),
         HeaderValue::from_bytes(b"Identity").unwrap());
     let body = req2.text().await.unwrap();
+    println!("BODY: {:?}",body);
     resp.headers_mut().insert(HeaderName::from_bytes(b"Content-Length").unwrap(),
         HeaderValue::from_bytes(body.len().to_string().as_bytes()).unwrap());
     let resp = resp.set_body(body);
