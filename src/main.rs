@@ -5,11 +5,11 @@ use reqwest::{Client, header::HeaderMap, Response};
 const WAKATIME_WEB:&str = "https://wakatime.com/";
 
 async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
-    let path_to_req = req.path();
+    let path_to_req = req.uri().to_string();
 
     // get url
     let mut url: String = String::from(WAKATIME_WEB);
-    url.push_str(path_to_req);
+    url.push_str(&path_to_req);
     println!("URL: {}",url);
     
     //get headers
