@@ -65,6 +65,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(Client::new()))
             .route("/api/v1/{something}", web::get().to(index))
+            .route("/api/v1/{something}/{something2}/{something3}", web::get().to(index))
     })
     .bind(("0.0.0.0",port))?
     .run().await
