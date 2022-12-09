@@ -58,7 +58,7 @@ async fn index(req: HttpRequest, client: web::Data<Client>)-> impl Responder{
 async fn main() -> std::io::Result<()> {
     let port: u16 = match std::env::var("PORT"){
         Ok(x)=> x.parse::<u16>().unwrap(),
-        Err(_)=> 7777
+        Err(_)=> 8080
     };
     HttpServer::new(||{
         App::new()
